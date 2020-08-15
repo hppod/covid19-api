@@ -11,11 +11,12 @@ app.get('/', (req, res) => {
 })
 
 app.get('/test', (req, res) => {
-    reqGoogle.makeRequest_Caso((content, error) => {
+    console.log('Test requested')
+    reqGoogle.makeRequest_Caso((result, error) => {
         if (error) {
             res.status(500).send(error)
         } else {
-            res.status(200).send(content)
+            res.status(200).send(result)
         }
     })
 })
