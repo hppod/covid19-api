@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const CasoFull = sequelize.define('CasoFull', {
-        id: DataTypes.INTEGER,
+        id: { type: DataTypes.INTEGER, primaryKey: true },
         city: DataTypes.STRING,
         city_ibge_code: DataTypes.STRING,
         date: DataTypes.DATE,
@@ -19,7 +19,13 @@ module.exports = (sequelize, DataTypes) => {
         place_type: DataTypes.STRING,
         state: DataTypes.STRING,
         createdAt: DataTypes.DATE
-    })
+    },
+        {
+            timestamps: true,
+            freezeTableName: true
+        }
+
+    )
 
     return CasoFull
 }
