@@ -4,6 +4,8 @@
   "description": "API with Covid-19 case numbers updated in Brazil",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +23,15 @@
   "bugs": {
     "url": "https://github.com/hppod/covid19-api/issues"
   },
-  "homepage": "https://github.com/hppod/covid19-api#readme"
+  "homepage": "https://github.com/hppod/covid19-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "sequelize": "^6.3.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "sequelize-cli": "^6.2.0"
+  }
 }
