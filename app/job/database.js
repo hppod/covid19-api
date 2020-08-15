@@ -12,4 +12,15 @@ function insertData_Caso(data, callback) {
         })
 }
 
-module.exports = { insertData_Caso }
+function hasData_Caso(callback) {
+    Caso.findAndCountAll()
+        .then(({ count }) => {
+            const hasData = count > 0 ? true : false
+            callback(hasData)
+        })
+        .catch(error => {
+            callback(error)
+        })
+}
+
+module.exports = { insertData_Caso, hasData_Caso }
