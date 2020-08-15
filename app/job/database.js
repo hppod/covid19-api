@@ -23,4 +23,18 @@ function hasData_Caso(callback) {
         })
 }
 
-module.exports = { insertData_Caso, hasData_Caso }
+function updateOldData_Caso(callback) {
+    Caso.update(
+        { is_last: 0 },
+        { where: { is_last: 1 } }
+    )
+        .then(([result]) => {
+            const hasUpdated = result > 0 ? true : false
+            callback(hasUpdated)
+        })
+        .catch(error => {
+            callback(error)
+        })
+}
+
+module.exports = { insertData_Caso, hasData_Caso, updateOldData_Caso }
