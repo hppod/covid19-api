@@ -11,7 +11,7 @@ function makeRequest_Caso(callback, next) {
             next()
         } else {
             let firstPos = JSON.parse(body)
-            firstPos = firstPos['results'][1]
+            firstPos = firstPos['results'].splice(0, 2)
             console.log('Dado recuperado com sucesso')
             db.insertData_Caso(firstPos, (result, error) => {
                 if (error) {
