@@ -1,9 +1,9 @@
 const { Caso } = require('./../models')
 
 function insertData_Caso(data, callback) {
-    Caso.create(data)
+    Caso.bulkCreate(data)
         .then(() => {
-            console.log('Caso inserido com sucesso')
+            console.log(`${data.length} novos registros foram inseridos na tabela CASO`)
             callback('Inserido com sucesso')
         })
         .catch(error => {
