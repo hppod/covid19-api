@@ -1,0 +1,25 @@
+{
+  "name": "covid19-api",
+  "version": "1.0.0",
+  "description": "API with Covid-19 case numbers updated in Brazil",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hppod/covid19-api.git"
+  },
+  "keywords": [
+    "covid19",
+    "brazil",
+    "nodejs",
+    "coronavirus"
+  ],
+  "author": "hppod",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hppod/covid19-api/issues"
+  },
+  "homepage": "https://github.com/hppod/covid19-api#readme"
+}
