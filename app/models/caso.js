@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         date: {
             allowNull: false,
-            type: DataTypes.DATE
+            type: DataTypes.DATEONLY
         },
         death_rate: {
             allowNull: false,
