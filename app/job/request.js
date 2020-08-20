@@ -2,62 +2,42 @@ const request = require('request')
 const { endpoint_caso, endpoint_caso_islast } = require('./endpoints.consts')
 const db = require('./database')
 
-function makeRequest_Caso(URL = endpoint_caso, callback, next) {
+const Object = [{
+    "city": null,
+    "city_ibge_code": "12",
+    "confirmed": 23146,
+    "confirmed_per_100k_inhabitants": 2624.45645,
+    "date": "2020-08-19",
+    "death_rate": 0.0255,
+    "deaths": 591,
+    "estimated_population_2019": 881935,
+    "is_last": true,
+    "order_for_place": 156,
+    "place_type": "state",
+    "state": "AC"
+}]
 
-    db.hasData_Caso((result, error) => {
-        if (error) {
-            callback(error)
-            next()
-        } else {
-            URL = result ? endpoint_caso_islast : endpoint_caso
-            const isLast = result
+async function main() {
+    const countDb = await checkIfDbIsPopulated()
+    console.log(countDb)
 
-            request(URL, (error, response, body) => {
-                if (error) {
-                    console.log('Houve um erro ao processar')
-                    callback(error)
-                    next()
-                } else {
-                    if (isLast) {
-                        let dateFirstPos = JSON.parse(body)
-                        dateFirstPos = dateFirstPos['results'][0]['date']
-                    }
-                }
-            })
-        }
+    const insertedDb = await insertDataInDb(Object)
+    console.log(insertedDb)
 
-        // db.hasData_Caso((count, error) => {
-        //     if (error) {
-        //         callback(error)
-        //         next()
-        //     } else {
-        //         const URL = count > 0 ? endpoint_caso_islast : endpoint_caso
-        //         const isLast = URL == endpoint_caso_islast ? true : false
-
-        //         console.log(`Requisitando dados para ${URL}`)
-
-        //         request(URL, (error, response, body) => {
-        //             if (error) {
-        //                 console.log('Houve um erro ao processar')
-        //                 callback(error)
-        //                 next()
-        //             } else {
-        //                 let firstPos = JSON.parse(body)
-        //                 firstPos = firstPos['results'].splice(0, 2)
-        //                 console.log('Dados recuperado com sucesso')
-        //                 db.insertData_Caso(firstPos, (result, error) => {
-        //                     if (error) {
-        //                         callback(error)
-        //                         next()
-        //                     } else {
-        //                         callback(result)
-        //                     }
-        //                 })
-        //             }
-        //         })
-        //     }
-        // })
-    })
+    const updatedDb = await updateOldDataInDb()
+    console.log(updatedDb)
 }
 
-module.exports = { makeRequest_Caso }
+async function checkIfDbIsPopulated() {
+    return await db.hasData_Caso() > 0 ? true : false
+}
+
+async function insertDataInDb(data) {
+    return await db.insertData_Caso(data)
+}
+
+async function updateOldDataInDb() {
+    return await db.updateOldData_Caso()
+}
+
+module.exports = { main }

@@ -1,40 +1,18 @@
 const { Caso } = require('./../models')
 
-function insertData_Caso(data, callback) {
-    Caso.bulkCreate(data)
-        .then(() => {
-            console.log(`${data.length} novos registros foram inseridos na tabela CASO`)
-            callback('Inserido com sucesso')
-        })
-        .catch(error => {
-            console.log('Erro ao inserir caso')
-            callback(error)
-        })
+const insertData_Caso = async data => {
+    const result = await Caso.bulkCreate(data)
+    return await result['length']
 }
 
-function hasData_Caso(callback) {
-    Caso.findAndCountAll()
-        .then(({ count }) => {
-            const hasData = count > 0 ? true : false
-            callback(hasData)
-        })
-        .catch(error => {
-            callback(error)
-        })
+const hasData_Caso = async () => {
+    const result = await Caso.findAndCountAll()
+    return await result['count']
 }
 
-function updateOldData_Caso(callback) {
-    Caso.update(
-        { is_last: 0 },
-        { where: { is_last: 1 } }
-    )
-        .then(([result]) => {
-            const hasUpdated = result > 0 ? true : false
-            callback(hasUpdated)
-        })
-        .catch(error => {
-            callback(error)
-        })
+const updateOldData_Caso = async () => {
+    const result = await Caso.update({ is_last: 0 }, { where: { is_last: 1 } })
+    return await result['length']
 }
 
 module.exports = { insertData_Caso, hasData_Caso, updateOldData_Caso }

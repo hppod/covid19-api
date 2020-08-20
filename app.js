@@ -12,13 +12,7 @@ app.get('/', (req, res) => {
 
 app.get('/test', (req, res) => {
     console.log('Test requested')
-    reqGoogle.makeRequest_Caso((result, error) => {
-        if (error) {
-            res.status(500).send(error)
-        } else {
-            res.status(200).send(result)
-        }
-    })
+    reqGoogle.main()
 })
 
 app.listen(PORT, () => console.log(`API listen on PORT ${PORT}`))
