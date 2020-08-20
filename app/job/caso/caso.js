@@ -1,31 +1,33 @@
-const request = require('request')
-const { endpoint_caso, endpoint_caso_islast } = require('../endpoints.consts')
+const fetch = require("node-fetch");
 const db = require('./db_caso')
+const { endpoint_caso, endpoint_caso_islast } = require('../endpoints.consts')
 
-const Object = [{
-    "city": null,
-    "city_ibge_code": "12",
-    "confirmed": 23146,
-    "confirmed_per_100k_inhabitants": 2624.45645,
-    "date": "2020-08-19",
-    "death_rate": 0.0255,
-    "deaths": 591,
-    "estimated_population_2019": 881935,
-    "is_last": true,
-    "order_for_place": 156,
-    "place_type": "state",
-    "state": "AC"
-}]
+const fetchDataFromBrasilIoAPI = async URL => {
+    const response = await fetch(URL)
+    return await response.json()
+}
 
 async function main() {
-    const countDb = await db.checkIfDbIsPopulated()
-    console.log(countDb)
 
-    const insertedDb = await db.insertDataInDb(Object)
-    console.log(insertedDb)
+    const countDataCasoTable = await db.checkIfDbIsPopulated()
+    const isLast = countDataCasoTable > 0 ? true : false
+    const URL = countDataCasoTable > 0 ? endpoint_caso_islast : endpoint_caso
 
-    const updatedDb = await db.updateOldDataInDb()
-    console.log(updatedDb)
+    const responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(URL)
+
+    if (isLast) {
+        const dateFirstResult = responseCovidBrIoAPI['results'][0]['date']
+        const countDataCasoTableByDate = await db.searchIfDataExistsByDate(dateFirstResult)
+
+        if (countDataCasoTableByDate > 0) {
+            console.log('Não é necessário novas ações no banco de dados')
+        } else {
+            await db.updateOldDataInDb()
+            const dataInserted = await db.insertDataInDb(responseCovidBrIoAPI['results'])
+            console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
+        }
+    }
+
 }
 
 module.exports = { main }
