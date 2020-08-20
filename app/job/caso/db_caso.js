@@ -15,4 +15,9 @@ const updateOldDataInDb = async () => {
     return await result['length']
 }
 
-module.exports = { insertDataInDb, checkIfDbIsPopulated, updateOldDataInDb }
+const searchIfDataExistsByDate = async dateP => {
+    const result = await Caso.findAndCountAll({ where: { date: dateP } })
+    return await result['count']
+}
+
+module.exports = { insertDataInDb, checkIfDbIsPopulated, updateOldDataInDb, searchIfDataExistsByDate }
