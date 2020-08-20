@@ -1,6 +1,6 @@
 const request = require('request')
 const { endpoint_caso, endpoint_caso_islast } = require('./endpoints.consts')
-const db = require('./database')
+const db = require('./database').default
 
 const Object = [{
     "city": null,
@@ -18,26 +18,14 @@ const Object = [{
 }]
 
 async function main() {
-    const countDb = await checkIfDbIsPopulated()
+    const countDb = await db.checkIfDbIsPopulated()
     console.log(countDb)
 
-    const insertedDb = await insertDataInDb(Object)
+    const insertedDb = await db.insertDataInDb(Object)
     console.log(insertedDb)
 
-    const updatedDb = await updateOldDataInDb()
+    const updatedDb = await db.updateOldDataInDb()
     console.log(updatedDb)
-}
-
-async function checkIfDbIsPopulated() {
-    return await db.hasData_Caso() > 0 ? true : false
-}
-
-async function insertDataInDb(data) {
-    return await db.insertData_Caso(data)
-}
-
-async function updateOldDataInDb() {
-    return await db.updateOldData_Caso()
 }
 
 module.exports = { main }
