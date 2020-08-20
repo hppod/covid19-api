@@ -1,6 +1,6 @@
 const request = require('request')
-const { endpoint_caso, endpoint_caso_islast } = require('./endpoints.consts')
-const db = require('./database').default
+const { endpoint_caso, endpoint_caso_islast } = require('../endpoints.consts')
+const db = require('./db_caso')
 
 const Object = [{
     "city": null,

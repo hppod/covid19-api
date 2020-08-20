@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000
 
-const reqGoogle = require('./app/job/request')
+const reqGoogle = require('./app/job/caso/caso')
 
 app.use(express.urlencoded({ extended: false }))
 

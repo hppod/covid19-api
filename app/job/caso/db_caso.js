@@ -1,4 +1,4 @@
-const { Caso } = require('./../models')
+const { Caso } = require('../../models')
 
 const insertDataInDb = async data => {
     const result = await Caso.bulkCreate(data)
