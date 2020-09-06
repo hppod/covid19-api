@@ -47,6 +47,7 @@ async function main() {
         }
     } else {
         responseAPI = await requests.fetchDataAPI(URL, false)
+        countPage = responseAPI['count']
         await fetchDataAddDB(responseAPI)
     }
 
