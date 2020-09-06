@@ -27,8 +27,7 @@ async function main() {
     totalDataInserted = 0
     countPage = 0
 
-    // const countDataCasoTable = await db.checkIfDbIsPopulated()
-    const countDataCasoTable = 1
+    const countDataCasoTable = await db.checkIfDbIsPopulated()
     const isLast = countDataCasoTable > 0 ? true : false
     const URL = countDataCasoTable > 0 ? endpoint_caso_islast : endpoint_caso
 
