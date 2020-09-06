@@ -37,9 +37,12 @@ const fetchDataAPI = async (URL, limited) => {
 const fetchDataAddDB = async (dataset) => {
     while (countPage > 0) {
         const dataInserted = await db.insertDataInDb(dataset['data'])
+
         console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
+
         totalDataInserted = totalDataInserted + dataInserted
         countPage = countPage - 1
+
         if (countPage > 0) {
             helpers.setMyTimeout(3000)
             dataset = await fetchDataAPI(dataset['nextUrl'], false)
@@ -52,8 +55,7 @@ async function main() {
     totalDataInserted = 0
     countPage = 0
 
-    // const countDataCasoTable = await db.checkIfDbIsPopulated()
-    const countDataCasoTable = 1
+    const countDataCasoTable = await db.checkIfDbIsPopulated()
     const isLast = countDataCasoTable > 0 ? true : false
     const URL = countDataCasoTable > 0 ? endpoint_caso_islast : endpoint_caso
 
