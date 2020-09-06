@@ -17,7 +17,7 @@ const fetchDataAddDB = async (dataset, timeout = 5000) => {
 
         if (countPage > 0) {
             helpers.setMyTimeout(timeout)
-            dataset = await requests.fetchDataAPI(dataset['nextUrl'], false)
+            dataset = await requests.fetchDataAPI(dataset['nextUrl'], false, true)
         }
     }
 }
@@ -27,27 +27,18 @@ async function main() {
     totalDataInserted = 0
     countPage = 0
 
-    const countDataCasoTable = await db.checkIfDbIsPopulated()
-    const isLast = countDataCasoTable > 0 ? true : false
+    let responseAPI = await requests.fetchDataAPI(endpoint_caso, true, false, 1)
 
-    let responseAPI = await requests.fetchDataAPI(endpoint_caso, true, isLast, 1)
+    const dateFirstResult = responseAPI
+    const countDataCasoTableByDate = await db.searchIfDataExistsByDate(dateFirstResult)
 
-    if (isLast) {
-        const dateFirstResult = responseAPI
-        const countDataCasoTableByDate = await db.searchIfDataExistsByDate(dateFirstResult)
-
-        if (countDataCasoTableByDate > 0) {
-            console.log('Não é necessário novas ações no banco de dados')
-        } else {
-            await db.updateOldDataInDb()
-            responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast)
-            countPage = responseAPI['count']
-            await fetchDataAddDB(responseAPI)
-        }
+    if (countDataCasoTableByDate > 0) {
+        console.log('Não é necessário novas ações no banco de dados')
     } else {
-        responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast, 6000)
+        await db.updateOldDataInDb()
+        responseAPI = await requests.fetchDataAPI(endpoint_caso, false, false)
         countPage = responseAPI['count']
-        await fetchDataAddDB(responseAPI, 15000)
+        await fetchDataAddDB(responseAPI)
     }
 
     if (totalDataInserted > 0) {
