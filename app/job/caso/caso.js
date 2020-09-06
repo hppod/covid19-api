@@ -1,4 +1,3 @@
-const fetch = require("node-fetch");
 const db = require('./db_caso')
 const helpers = require('./../../helpers/helpers')
 const { endpoint_caso, endpoint_caso_islast } = require('../endpoints.consts')
@@ -6,7 +5,7 @@ const got = require('got')
 
 let resReturn, totalDataInserted, countPage
 
-const fetchDataFromBrasilIoAPI = async (URL, limited) => {
+const fetchDataAPI = async (URL, limited) => {
     console.log(`Requisitando dados: ${URL}`)
 
     try {
@@ -15,7 +14,7 @@ const fetchDataFromBrasilIoAPI = async (URL, limited) => {
         if (body['results'] == undefined) {
             const seconds = body['available_in'].charAt(0) * 1000
             helpers.setMyTimeout(seconds)
-            await fetchDataFromBrasilIoAPI(URL)
+            await fetchDataAPI(URL)
         }
 
         if (!limited) {
@@ -35,6 +34,19 @@ const fetchDataFromBrasilIoAPI = async (URL, limited) => {
 
 }
 
+const fetchDataAddDB = async (dataset) => {
+    while (countPage > 0) {
+        const dataInserted = await db.insertDataInDb(dataset['data'])
+        console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
+        totalDataInserted = totalDataInserted + dataInserted
+        countPage = countPage - 1
+        if (countPage > 0) {
+            helpers.setMyTimeout(3000)
+            dataset = await fetchDataAPI(dataset['nextUrl'], false)
+        }
+    }
+}
+
 async function main() {
     console.log('Iniciando a entidade Caso')
     totalDataInserted = 0
@@ -45,34 +57,22 @@ async function main() {
     const isLast = countDataCasoTable > 0 ? true : false
     const URL = countDataCasoTable > 0 ? endpoint_caso_islast : endpoint_caso
 
-    let responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(URL, true)
+    let responseAPI = await fetchDataAPI(URL, true)
 
     if (isLast) {
-        const dateFirstResult = responseCovidBrIoAPI
+        const dateFirstResult = responseAPI
         const countDataCasoTableByDate = await db.searchIfDataExistsByDate(dateFirstResult)
 
         if (countDataCasoTableByDate > 0) {
             console.log('Não é necessário novas ações no banco de dados')
         } else {
             await db.updateOldDataInDb()
-            responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(URL, false)
-
-            while (countPage > 0) {
-                const dataInserted = await db.insertDataInDb(responseCovidBrIoAPI['data'])
-                console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
-                totalDataInserted = totalDataInserted + dataInserted
-                countPage = countPage - 1
-                if (countPage > 0) {
-                    helpers.setMyTimeout(3000)
-                    responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(responseCovidBrIoAPI['nextUrl'], false)
-                }
-            }
-
+            responseAPI = await fetchDataAPI(URL, false)
+            await fetchDataAddDB(responseAPI)
         }
     } else {
-        responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(URL, false)
-        const dataInserted = await db.insertDataInDb(responseCovidBrIoAPI)
-        console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
+        responseAPI = await fetchDataAPI(URL, false)
+        await fetchDataAddDB(responseAPI)
     }
 
     if (totalDataInserted > 0) {

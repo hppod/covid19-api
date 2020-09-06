@@ -32,7 +32,6 @@
     "got": "^11.6.0",
     "https": "^1.0.0",
     "mysql2": "^2.1.0",
-    "node-fetch": "^2.6.1",
     "sequelize": "^6.3.4"
   },
   "devDependencies": {
