@@ -5,7 +5,7 @@ const { endpoint_caso } = require('../endpoints.consts')
 
 let totalDataInserted, countPage
 
-const fetchDataAddDB = async (dataset) => {
+const fetchDataAddDB = async (dataset, timeout = 5000) => {
     while (countPage > 0) {
         const dataInserted = await db.insertDataInDb(dataset['data'])
 
@@ -16,7 +16,7 @@ const fetchDataAddDB = async (dataset) => {
         console.log(`Faltam ${countPage} páginas para finalizar a rotina`)
 
         if (countPage > 0) {
-            helpers.setMyTimeout(3000)
+            helpers.setMyTimeout(timeout)
             dataset = await requests.fetchDataAPI(dataset['nextUrl'], false)
         }
     }
@@ -45,9 +45,9 @@ async function main() {
             await fetchDataAddDB(responseAPI)
         }
     } else {
-        responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast)
+        responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast, 50000)
         countPage = responseAPI['count']
-        await fetchDataAddDB(responseAPI)
+        await fetchDataAddDB(responseAPI, 60000)
     }
 
     if (totalDataInserted > 0) {

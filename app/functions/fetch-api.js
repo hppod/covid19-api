@@ -2,7 +2,7 @@ const got = require('got')
 
 let resReturn
 
-const fetchDataAPI = async (URL, limited, isLast, pageSize = 6000) => {
+const fetchDataAPI = async (URL, limited, isLast, pageSize = 2500) => {
     console.log(`Requisitando dados: ${URL}`)
 
     try {
