@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 app.get('/test', (req, res) => {
     console.log('Test requested')
-    downloadCasoData.main()
+    downloadCasoData.main().then(data => res.send(data)).catch(error => res.send(error))
 })
 
 app.listen(PORT, () => {

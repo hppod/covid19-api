@@ -2,35 +2,33 @@ const fetch = require("node-fetch");
 const db = require('./db_caso')
 const helpers = require('./../../helpers/helpers')
 const { endpoint_caso, endpoint_caso_islast } = require('../endpoints.consts')
-const req = require('request')
-const axios = require('axios').default
+const got = require('got')
 
-let request, response, resReturn, totalDataInserted, countPage
+let resReturn, totalDataInserted, countPage
 
 const fetchDataFromBrasilIoAPI = async (URL, limited) => {
     console.log(`Requisitando dados: ${URL}`)
 
     try {
-        request = await fetch(URL)
-        response = await request.json()
+        let { body } = await got(URL, { responseType: 'json' })
 
-        if (response['results'] == undefined) {
-            const seconds = response['available_in'].charAt(0) * 1000
+        if (body['results'] == undefined) {
+            const seconds = body['available_in'].charAt(0) * 1000
             helpers.setMyTimeout(seconds)
             await fetchDataFromBrasilIoAPI(URL)
         }
 
         if (!limited) {
             resReturn = {
-                nextUrl: response['next'],
-                data: response['results']
+                nextUrl: body['next'],
+                data: body['results']
             }
             return resReturn
         }
 
-        countPage = Math.ceil(response['count'] / 1000)
+        countPage = Math.ceil(body['count'] / 1000)
 
-        return response['results'][0]['date']
+        return body['results'][0]['date']
     } catch (e) {
         console.log(e)
     }

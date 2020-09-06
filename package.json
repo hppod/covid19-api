@@ -26,18 +26,18 @@
   },
   "homepage": "https://github.com/hppod/covid19-api#readme",
   "dependencies": {
-    "axios": "^0.20.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "got": "^11.6.0",
     "https": "^1.0.0",
     "mysql2": "^2.1.0",
-    "node-fetch": "^2.6.0",
-    "request": "^2.88.2",
+    "node-fetch": "^2.6.1",
     "sequelize": "^6.3.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",
+    "pm2": "^4.4.1",
     "sequelize-cli": "^6.2.0"
   }
 }
