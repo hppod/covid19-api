@@ -45,9 +45,9 @@ async function main() {
             await fetchDataAddDB(responseAPI)
         }
     } else {
-        responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast, 50000)
+        responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast, 10000)
         countPage = responseAPI['count']
-        await fetchDataAddDB(responseAPI, 60000)
+        await fetchDataAddDB(responseAPI, 45000)
     }
 
     if (totalDataInserted > 0) {
