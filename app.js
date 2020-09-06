@@ -18,4 +18,6 @@ app.get('/test', (req, res) => {
     downloadCasoData.main()
 })
 
-app.listen(PORT, () => console.log(`API listen on PORT ${PORT}`))
+app.listen(PORT, () => {
+    console.log(`API listen on PORT ${PORT}`)
+})

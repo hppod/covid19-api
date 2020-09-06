@@ -2,35 +2,35 @@ const fetch = require("node-fetch");
 const db = require('./db_caso')
 const helpers = require('./../../helpers/helpers')
 const { endpoint_caso, endpoint_caso_islast } = require('../endpoints.consts')
+const req = require('request')
+const axios = require('axios').default
 
-let request, response
-const casoContent = new Array()
+let request, response, resReturn, totalDataInserted, countPage
 
 const fetchDataFromBrasilIoAPI = async (URL, limited) => {
     console.log(`Requisitando dados: ${URL}`)
 
     try {
-        request = await fetch(URL).catch(e => console.log(e))
+        request = await fetch(URL)
         response = await request.json()
 
-        if (response['results'] != undefined) {
-            response['results'].forEach(caso => casoContent.push(caso))
-        } else {
+        if (response['results'] == undefined) {
             const seconds = response['available_in'].charAt(0) * 1000
             helpers.setMyTimeout(seconds)
             await fetchDataFromBrasilIoAPI(URL)
         }
 
         if (!limited) {
-            if (response['next']) {
-                let newURLRequest = response['next']
-                console.log(`${casoContent.length} dados coletados até o momento`)
-                helpers.setMyTimeout(5000)
-                await fetchDataFromBrasilIoAPI(newURLRequest)
+            resReturn = {
+                nextUrl: response['next'],
+                data: response['results']
             }
+            return resReturn
         }
 
-        return casoContent
+        countPage = Math.ceil(response['count'] / 1000)
+
+        return response['results'][0]['date']
     } catch (e) {
         console.log(e)
     }
@@ -39,33 +39,46 @@ const fetchDataFromBrasilIoAPI = async (URL, limited) => {
 
 async function main() {
     console.log('Iniciando a entidade Caso')
+    totalDataInserted = 0
+    countPage = 0
 
-    const countDataCasoTable = await db.checkIfDbIsPopulated()
+    // const countDataCasoTable = await db.checkIfDbIsPopulated()
+    const countDataCasoTable = 1
     const isLast = countDataCasoTable > 0 ? true : false
     const URL = countDataCasoTable > 0 ? endpoint_caso_islast : endpoint_caso
 
     let responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(URL, true)
 
     if (isLast) {
-        const dateFirstResult = responseCovidBrIoAPI[0]['date']
+        const dateFirstResult = responseCovidBrIoAPI
         const countDataCasoTableByDate = await db.searchIfDataExistsByDate(dateFirstResult)
 
         if (countDataCasoTableByDate > 0) {
             console.log('Não é necessário novas ações no banco de dados')
         } else {
             await db.updateOldDataInDb()
-            casoContent.splice(0, casoContent.length)
             responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(URL, false)
-            const dataInserted = await db.insertDataInDb(responseCovidBrIoAPI)
-            console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
-            casoContent.splice(0, casoContent.length)
+
+            while (countPage > 0) {
+                const dataInserted = await db.insertDataInDb(responseCovidBrIoAPI['data'])
+                console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
+                totalDataInserted = totalDataInserted + dataInserted
+                countPage = countPage - 1
+                if (countPage > 0) {
+                    helpers.setMyTimeout(3000)
+                    responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(responseCovidBrIoAPI['nextUrl'], false)
+                }
+            }
+
         }
     } else {
-        casoContent.splice(0, casoContent.length)
         responseCovidBrIoAPI = await fetchDataFromBrasilIoAPI(URL, false)
         const dataInserted = await db.insertDataInDb(responseCovidBrIoAPI)
         console.log(`${dataInserted} novos registros foram inseridos no banco de dados`)
-        casoContent.splice(0, casoContent.length)
+    }
+
+    if (totalDataInserted > 0) {
+        console.log(`Ao total foram inseridos ${totalDataInserted} novos registros`)
     }
 
     console.log('Finalizando a entidade Caso')
