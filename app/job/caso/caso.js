@@ -1,7 +1,7 @@
 const db = require('./db_caso')
 const helpers = require('./../../helpers/helpers')
 const requests = require('./../../functions/fetch-api')
-const { endpoint_caso, endpoint_caso_islast } = require('../endpoints.consts')
+const { endpoint_caso } = require('../endpoints.consts')
 
 let totalDataInserted, countPage
 
@@ -29,9 +29,8 @@ async function main() {
 
     const countDataCasoTable = await db.checkIfDbIsPopulated()
     const isLast = countDataCasoTable > 0 ? true : false
-    const URL = countDataCasoTable > 0 ? endpoint_caso_islast : endpoint_caso
 
-    let responseAPI = await requests.fetchDataAPI(URL, true)
+    let responseAPI = await requests.fetchDataAPI(endpoint_caso, true, isLast, 1)
 
     if (isLast) {
         const dateFirstResult = responseAPI
@@ -41,12 +40,12 @@ async function main() {
             console.log('Não é necessário novas ações no banco de dados')
         } else {
             await db.updateOldDataInDb()
-            responseAPI = await requests.fetchDataAPI(URL, false)
+            responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast)
             countPage = responseAPI['count']
             await fetchDataAddDB(responseAPI)
         }
     } else {
-        responseAPI = await requests.fetchDataAPI(URL, false)
+        responseAPI = await requests.fetchDataAPI(endpoint_caso, false, isLast)
         countPage = responseAPI['count']
         await fetchDataAddDB(responseAPI)
     }

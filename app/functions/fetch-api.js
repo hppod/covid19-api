@@ -2,11 +2,14 @@ const got = require('got')
 
 let resReturn
 
-const fetchDataAPI = async (URL, limited) => {
+const fetchDataAPI = async (URL, limited, isLast, pageSize = 6000) => {
     console.log(`Requisitando dados: ${URL}`)
 
     try {
-        let { body } = await got(URL, { responseType: 'json' })
+
+        const searchParams = new URLSearchParams([['is_last', isLast], ['page_size', pageSize]])
+
+        let { body } = await got(URL, { searchParams, responseType: 'json' })
 
         if (body['results'] == undefined) {
             const seconds = body['available_in'].charAt(0) * 1000
