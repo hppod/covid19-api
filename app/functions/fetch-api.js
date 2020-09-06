@@ -21,7 +21,7 @@ const fetchDataAPI = async (URL, limited, isLast, pageSize = 2500) => {
             resReturn = {
                 nextUrl: body['next'],
                 data: body['results'],
-                count: Math.ceil(body['count'] / 1000)
+                count: Math.ceil(body['count'] / pageSize)
             }
             return resReturn
         }
