@@ -1,6 +1,7 @@
 const db = require('./db_caso')
 const helpers = require('./../../helpers/helpers')
 const requests = require('./../../functions/fetch-api')
+const logger = require('./../../log/log')
 const { endpoint_caso } = require('../endpoints.consts')
 
 let totalDataInserted, countPage
@@ -9,6 +10,7 @@ const fetchDataAddDB = async (dataset, timeout = 5000) => {
     while (countPage > 0) {
         const dataInserted = await db.insertDataInDb(dataset['data'])
 
+        logger.log('CS', 'C', dataInserted)
         totalDataInserted = totalDataInserted + dataInserted
         console.log(`Até o momento foram inseridos ${totalDataInserted} novos registros`)
 
@@ -23,6 +25,7 @@ const fetchDataAddDB = async (dataset, timeout = 5000) => {
 }
 
 async function main() {
+    logger.log('CS', 'G')
     console.log('Iniciando a rotina Caso')
     totalDataInserted = 0
     countPage = 0
@@ -32,6 +35,7 @@ async function main() {
     const countDataCasoTableByDate = await db.searchIfDataExistsByDate(responseAPI)
 
     if (countDataCasoTableByDate > 0) {
+        logger.log('CS', 'C')
         console.log('Não é necessário novas ações no banco de dados')
     } else {
         await db.updateOldDataInDb()
@@ -41,6 +45,7 @@ async function main() {
     }
 
     if (totalDataInserted > 0) {
+        logger.log('CS', 'CT', totalDataInserted)
         console.log(`Ao total foram inseridos ${totalDataInserted} novos registros`)
     }
 

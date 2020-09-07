@@ -16,11 +16,8 @@ app.get('/', (req, res) => {
 })
 
 app.get('/test', (req, res) => {
-    console.log('Test requested')
-
-    logger.log('CS', 'G').then(() => res.send('ok')).catch(() => res.send('not ok'))
-
-    // downloadCasoData.main().then(data => res.send(data)).catch(error => res.send(error))
+    // logger.log('CS', 'C', 120).then(() => res.send('ok')).catch((error) => res.send(error))
+    downloadCasoData.main().then(data => res.send(data)).catch(error => res.send(error))
     // downloadCasoFullData.main().then(data => res.send(data)).catch(error => res.send(error))
 })
 
