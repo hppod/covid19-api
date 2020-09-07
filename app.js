@@ -4,6 +4,7 @@ const cors = require('cors')
 const PORT = process.env.PORT || 3000
 
 const downloadCasoData = require('./app/job/caso/caso')
+const downloadCasoFullData = require('./app/job/caso_full/caso_full')
 
 app.use(express.urlencoded({ extended: false }))
 
@@ -15,7 +16,8 @@ app.get('/', (req, res) => {
 
 app.get('/test', (req, res) => {
     console.log('Test requested')
-    downloadCasoData.main().then(data => res.send(data)).catch(error => res.send(error))
+    // downloadCasoData.main().then(data => res.send(data)).catch(error => res.send(error))
+    downloadCasoFullData.main().then(data => res.send(data)).catch(error => res.send(error))
 })
 
 app.listen(PORT, () => {

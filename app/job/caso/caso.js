@@ -29,8 +29,7 @@ async function main() {
 
     let responseAPI = await requests.fetchDataAPI(endpoint_caso, true, false, 1)
 
-    const dateFirstResult = responseAPI
-    const countDataCasoTableByDate = await db.searchIfDataExistsByDate(dateFirstResult)
+    const countDataCasoTableByDate = await db.searchIfDataExistsByDate(responseAPI)
 
     if (countDataCasoTableByDate > 0) {
         console.log('Não é necessário novas ações no banco de dados')
