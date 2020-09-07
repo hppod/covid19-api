@@ -24,7 +24,7 @@ const fetchDataAddDB = async (dataset, timeout = 5000) => {
     }
 }
 
-async function main() {
+async function job() {
     logger.log('CSF', 'G')
     console.log('Iniciando a rotina CasoFull')
     totalDataInserted = 0
@@ -52,4 +52,4 @@ async function main() {
     console.log('Finalizando a rotina CasoFull')
 }
 
-module.exports = { main }
+module.exports = { job }

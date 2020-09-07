@@ -24,7 +24,7 @@ const fetchDataAddDB = async (dataset, timeout = 5000) => {
     }
 }
 
-async function main() {
+async function job() {
     logger.log('CS', 'G')
     console.log('Iniciando a rotina Caso')
     totalDataInserted = 0
@@ -37,6 +37,8 @@ async function main() {
     if (countDataCasoTableByDate > 0) {
         logger.log('CS', 'C')
         console.log('Não é necessário novas ações no banco de dados')
+        console.log('Finalizando a rotina Caso. A rotina CasoFull não será iniciada pois não existem novos dados disponíveis.')
+        return false
     } else {
         await db.updateOldDataInDb()
         responseAPI = await requests.fetchDataAPI(endpoint_caso, false, false)
@@ -47,9 +49,10 @@ async function main() {
     if (totalDataInserted > 0) {
         logger.log('CS', 'CT', totalDataInserted)
         console.log(`Ao total foram inseridos ${totalDataInserted} novos registros`)
+        console.log('Finalizando a rotina Caso')
+        return true
     }
 
-    console.log('Finalizando a rotina Caso')
 }
 
-module.exports = { main }
+module.exports = { job }
