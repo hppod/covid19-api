@@ -28,6 +28,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "cron": "^1.8.2",
+    "csv-parser": "^2.3.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "got": "^11.6.0",
